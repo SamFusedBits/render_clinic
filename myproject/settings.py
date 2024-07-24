@@ -18,7 +18,7 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Fetch the model path from the environment variable
-MODEL_PATH = os.getenv('MODEL_PATH', 'modelfiles\model1')
+MODEL_PATH = os.getenv('MODEL_PATH', 'modelfiles/model1')
 
 # Ensure BASE_DIR is used for the local path in development
 MODEL_PATH = BASE_DIR / MODEL_PATH
