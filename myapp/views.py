@@ -26,7 +26,7 @@ def submit_survey(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-model = joblib.load('modelfiles\\model1')
+model = joblib.load('modelfiles/model1')
 
 class PredictView(APIView):
     def get(self, request, *args, **kwargs):
