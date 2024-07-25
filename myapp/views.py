@@ -13,25 +13,37 @@ from django.conf import settings
 import joblib
 import numpy as np
 import pandas as pd
+import logging
 
 def home(request):
     return HttpResponse("Hello, world!")
 
+logger = logging.getLogger(__name__)
 @api_view(['POST'])
 def submit_survey(request):
+    logger.debug("Received request data: %s", request.data)
     if request.method == 'POST':
         serializer = SurveyResponseSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            logger.debug("Saved data: %s", serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        logger.error("Serializer errors: %s", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 model = joblib.load('modelfiles/model1')
 
 class PredictView(APIView):
     def get(self, request, *args, **kwargs):
+        logger.debug("Retrieving latest survey response")
         # Retrieve the latest survey response
-        survey_response = SurveyResponse.objects.latest('id')
+        try:
+            survey_response = SurveyResponse.objects.latest('id')
+            logger.debug("Latest survey response: %s", survey_response)
+        except SurveyResponse.DoesNotExist:
+            logger.error("No survey responses found")
+            return JsonResponse({"error": "No survey responses found"}, status=status.HTTP_404_NOT_FOUND)
+
 
         # age = int(survey_response.age)
 
@@ -81,6 +93,7 @@ class PredictView(APIView):
             # survey_response.first_time_doctor_visit
         ]).reshape(1, -1)
 
+        logger.debug("Input data: %s", input_data)
         # Make predictions using the model
         # prediction = model.predict(input_data)
         # prediction = input_data
@@ -96,24 +109,28 @@ class PredictView(APIView):
 
         # Function to preprocess incoming data
         def preprocess_data(new_data, label_encoders, columns):
+            logger.debug("Preprocessing data: %s", new_data)
             # Create a DataFrame from the list
             df = pd.DataFrame(new_data, columns=columns)
+            logger.debug("DataFrame before encoding: %s", df)
             
             # Apply LabelEncoders to the relevant columns, excluding 'Age'
             for column in columns:
                 if column != 'Age' and column in label_encoders:
                     le = label_encoders[column]
                     df[column] = le.transform(df[column].apply(lambda x: x.lower()))
-            
+            logger.debug("DataFrame after encoding: %s", df)
             return df
 
         # Function to handle new data and make predictions
         def handle_new_data(new_data):
             # Preprocess the data
             processed_data = preprocess_data(new_data, label_encoders, columns)
+            logger.debug("Processed Data: %s", processed_data)
             
             # Predict using the model
             predictions = model.predict(processed_data)
+            logger.debug("Predictions: %s", predictions)
             return predictions
 
         # new_data = [["30", "male", "60 - 70 kg", "6 - 8 hrs", "Yes", "No", "None", "No", "No", "No", "No", "No", "No", "No", "Sticking with stool", "Red", "No"]]
