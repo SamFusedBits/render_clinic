@@ -85,8 +85,8 @@ class PredictView(APIView):
         # prediction = model.predict(input_data)
         # prediction = input_data
 
-        label_encoders = joblib.load('modelfiles\\label_encoders.pkl')
-        model = joblib.load('modelfiles\\model1')
+        label_encoders = joblib.load('modelfiles/label_encoders.pkl')
+        model = joblib.load('modelfiles/model1')
 
         columns = [
             'Age', 'Gender', 'Weight', 'sitting_hours', 'oily_spicy', 'Constipation', 'endure_pain',
