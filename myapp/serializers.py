@@ -5,6 +5,7 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=255, required=False, allow_blank=True)
     age = serializers.IntegerField(required=False, allow_null=True)
     gender = serializers.CharField(max_length=10, required=False, allow_blank=True)
+    weight = serializers.IntegerField(required=False, allow_null=True)
     working = serializers.CharField(max_length=10, required=False, allow_blank=True)
     work_shift = serializers.CharField(max_length=10, required=False, allow_blank=True)
     job_nature = serializers.CharField(max_length=50, required=False, allow_blank=True)
@@ -44,7 +45,7 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
     just_delivered_baby = serializers.CharField(max_length=20, required=False, allow_blank=True)
     family_anal_cancer = serializers.CharField(max_length=20, required=False, allow_blank=True)
     first_time_doctor_visit = serializers.CharField(max_length=20, required=False, allow_blank=True)
-    
+
     class Meta:
         model = SurveyResponse
         fields = '__all__'
