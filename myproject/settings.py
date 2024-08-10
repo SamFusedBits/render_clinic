@@ -72,6 +72,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "https://render-clinic.onrender.com",
+    "http://localhost:3000",
 ]
 
 ROOT_URLCONF = 'myproject.urls'
